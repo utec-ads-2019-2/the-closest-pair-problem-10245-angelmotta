@@ -45,5 +45,6 @@ int main(){
             printf("%.4lf\n", min_distanace);
         }
     }
+    
     return 0;
 }
