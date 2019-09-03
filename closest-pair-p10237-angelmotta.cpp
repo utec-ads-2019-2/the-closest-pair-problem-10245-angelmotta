@@ -1,62 +1,49 @@
-#include <iostream>
-#include <cmath>
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
 
 using namespace std;
+struct Punto{
+    double x, y;
+    double calculateDistance(const Punto& destino){
+        return sqrt((destino.x - x)*(destino.x - x) + (destino.y - y)*(destino.y - y));
+    }
 
-double min_distance;
+}arr_points[10000];
 
-void calculateDistances(int index_origen, int index_destino, double* x, double* y){
-	double x_dist, y_dist;
-	double distance;
-	x_dist = x[index_destino] - x[index_origen];
-	y_dist = y[index_destino] - y[index_origen];
-	distance = sqrt(x_dist*x_dist + y_dist*y_dist);
-	distance = (int)(distance*10000);
-	distance = (double)distance/10000;
-	//cout << distance << "\n";
-	if(distance < min_distance){
-		min_distance = distance;
-	}
-}
 
-void generateCombinations(int number_points, double* x_dots, double* y_dots){
-	for(int i=0; i<number_points-1; ++i){
-		int destino = i;
-		for(int j=0; j<number_points-1-i; ++j){
-			//cout << i << " con " << destino+1 << " ";
-			calculateDistances(i, destino+1, x_dots, y_dots);
-			destino++;
-		}
-		//cout << '\n';
-	}
+bool customSort(const Punto& a, const Punto& b){
+    return (a.x < b.x);
 }
 
 int main(){
-	int number_points;
-	while(scanf("%d",&number_points) == 1){
-		min_distance = 100000.0;
-		if(number_points == 0) break;
-		int num_distancias;
-		double x, y;
-		double* x_coordinates = new double[number_points];
-		double* y_coordinates = new double[number_points];
-		num_distancias = number_points*(number_points-1)/2;
-		//int* distancias = new int[num_distancias];
+    int number_points;
+    double min_distanace, distance;
+    while(scanf("%d", &number_points) && number_points){
+        for(int i = 0; i < number_points; ++i){
+            scanf("%lf%lf", &arr_points[i].x, &arr_points[i].y);
+        }
 
-		for(int i=0; i<number_points; ++i){
-			scanf("%lf %lf", &x, &y);
-			x_coordinates[i] = x;
-			y_coordinates[i] = y;
-		}
-		generateCombinations(number_points, x_coordinates, y_coordinates);
-		if(min_distance < 10000){
-			printf("%.4lf\n", min_distance);
-		}
-		else{
-			printf("INFINITY \n");
-		}
-		delete[] x_coordinates;
-		delete[] y_coordinates;
-	}
-	return 0;
+        std::sort(arr_points, arr_points + number_points, customSort);
+
+        min_distanace = 10000;
+        for(int i = 0; i < number_points; ++i){
+            for(int j = i + 1; j < number_points; ++j){
+                distance = arr_points[j].x - arr_points[i].x;
+                if(distance >= min_distanace) break;
+                //if(point[i].x + min_distanace < point[j].x) break;
+                double distance = arr_points[i].calculateDistance(arr_points[j]);
+                if (distance < min_distanace){
+                    min_distanace = distance;
+                }
+            }
+        }
+        if (min_distanace == 10000){
+            printf("INFINITY\n");
+        }
+        else{
+            printf("%.4lf\n", min_distanace);
+        }
+    }
+    return 0;
 }
